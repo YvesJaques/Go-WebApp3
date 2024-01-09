@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"web3/models"
 )
 
 var tmplCache = make(map[string]*template.Template)
 
-func RenderTemplate(w http.ResponseWriter, t string) {
+func RenderTemplate(w http.ResponseWriter, t string, pd *models.PageData) {
 	var tmpl *template.Template
 	var err error
 	_, inMap := tmplCache[t]
@@ -21,7 +22,7 @@ func RenderTemplate(w http.ResponseWriter, t string) {
 		fmt.Println("Template in cache")
 	}
 	tmpl = tmplCache[t]
-	err = tmpl.Execute(w, nil)
+	err = tmpl.Execute(w, pd)
 	if err != nil {
 		fmt.Println(err)
 	}
