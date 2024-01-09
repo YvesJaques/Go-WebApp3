@@ -51,3 +51,9 @@ func (m *Repository) MakePostHandler(w http.ResponseWriter, request *http.Reques
 
 	render.RenderTemplate(w, "make-post.page.tmpl", &models.PageData{StrMap: strMap})
 }
+
+func (m *Repository) PageHandler(w http.ResponseWriter, request *http.Request) {
+	strMap := make(map[string]string)
+
+	render.RenderTemplate(w, "page.page.tmpl", &models.PageData{StrMap: strMap})
+}
