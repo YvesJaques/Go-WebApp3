@@ -1,7 +1,13 @@
 package config
 
-import "log"
+import (
+	"log"
+
+	"github.com/alexedwards/scs/v2"
+)
 
 type AppConfig struct {
-	InfoLog *log.Logger
+	InfoLog   *log.Logger
+	Session   *scs.SessionManager
+	CSRFToken string
 }

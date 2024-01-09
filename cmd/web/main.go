@@ -3,12 +3,24 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 	"web3/pkg/config"
 	handlers "web3/pkg/handlers"
+
+	"github.com/alexedwards/scs/v2"
 )
 
+var sessionManager *scs.SessionManager
+var app config.AppConfig
+
 func main() {
-	var app config.AppConfig
+	sessionManager = scs.New()
+	sessionManager.Lifetime = 24 * time.Hour
+	sessionManager.Cookie.Persist = true
+	sessionManager.Cookie.Secure = false
+	// for testing
+	sessionManager.Cookie.SameSite = http.SameSiteLaxMode
+	app.Session = sessionManager
 
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandlers(repo)
