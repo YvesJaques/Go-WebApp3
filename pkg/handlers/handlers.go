@@ -39,3 +39,9 @@ func (m *Repository) AboutHandler(w http.ResponseWriter, request *http.Request) 
 
 	render.RenderTemplate(w, "about.page.tmpl", &models.PageData{StrMap: strMap})
 }
+
+func (m *Repository) LoginHandler(w http.ResponseWriter, request *http.Request) {
+	strMap := make(map[string]string)
+
+	render.RenderTemplate(w, "login.page.tmpl", &models.PageData{StrMap: strMap})
+}
