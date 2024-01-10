@@ -26,6 +26,8 @@ func routes(app *config.AppConfig) http.Handler {
 
 	mux.Post("/makepost", handlers.Repo.PostMakePostHandler)
 
+	mux.Post("/makepost", handlers.Repo.PostMakePostHandler)
+
 	fileServer := http.FileServer(http.Dir("./static/"))
 
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))

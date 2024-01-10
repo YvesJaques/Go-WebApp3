@@ -10,6 +10,11 @@
 
         <div class="form-group mt-3">
             <label for="blog_title">Title:</label>
+            
+            {{with .Form.Errors.GetError "blog_title"}}
+                <label class="text-danger">{{.}}</label>
+
+            {{end}}
             <input class="form-control"
                 id="blog_title" autocomplete="off"
                 type="text" name="blog_title"

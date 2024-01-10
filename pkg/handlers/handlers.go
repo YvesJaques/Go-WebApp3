@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"web3/models"
 	"web3/pkg/config"
+	"web3/pkg/forms"
 	"web3/pkg/render"
 )
 
@@ -47,21 +49,40 @@ func (m *Repository) LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) MakePostHandler(w http.ResponseWriter, r *http.Request) {
-	strMap := make(map[string]string)
+	render.RenderTemplate(w, r, "make-post.page.tmpl", &models.PageData{
+		Form: forms.New(nil),
+	})
+}
 
-	render.RenderTemplate(w, r, "make-post.page.tmpl", &models.PageData{StrMap: strMap})
+func (m *Repository) PostMakePostHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	article := models.Article{
+		BlogTitle:   r.Form.Get("blog_title"),
+		BlogArticle: r.Form.Get("blog_article"),
+	}
+
+	form := forms.New(r.PostForm)
+	form.HasValue("blog_title", r)
+
+	if !form.Valid() {
+		data := make(map[string]interface{})
+		data["article"] = article
+
+		render.RenderTemplate(w, r, "make-post.page.tmpl", &models.PageData{
+			Form: form,
+			Data: data,
+		})
+		return
+	}
 }
 
 func (m *Repository) PageHandler(w http.ResponseWriter, r *http.Request) {
 	strMap := make(map[string]string)
 
 	render.RenderTemplate(w, r, "page.page.tmpl", &models.PageData{StrMap: strMap})
-}
-
-func (m *Repository) PostMakePostHandler(w http.ResponseWriter, r *http.Request) {
-
-	blog_title := r.Form.Get("blog_title")
-	blog_article := r.Form.Get("blog_article")
-	w.Write([]byte(blog_title))
-	w.Write([]byte(blog_article))
 }
