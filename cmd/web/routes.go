@@ -24,5 +24,7 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/makepost", handlers.Repo.MakePostHandler)
 	mux.Get("/page", handlers.Repo.PageHandler)
 
+	mux.Post("/makepost", handlers.Repo.PostMakePostHandler)
+
 	return mux
 }

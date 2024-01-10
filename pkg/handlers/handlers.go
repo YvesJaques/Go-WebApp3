@@ -23,37 +23,45 @@ func NewHandlers(r *Repository) {
 	Repo = r
 }
 
-func (m *Repository) HomeHandler(w http.ResponseWriter, request *http.Request) {
-	m.App.Session.Put(request.Context(), "userid", "12345")
+func (m *Repository) HomeHandler(w http.ResponseWriter, r *http.Request) {
+	m.App.Session.Put(r.Context(), "userid", "12345")
 
-	render.RenderTemplate(w, "home.page.tmpl", &models.PageData{})
+	render.RenderTemplate(w, r, "home.page.tmpl", &models.PageData{})
 }
 
-func (m *Repository) AboutHandler(w http.ResponseWriter, request *http.Request) {
+func (m *Repository) AboutHandler(w http.ResponseWriter, r *http.Request) {
 	strMap := make(map[string]string)
 	strMap["title"] = "About Us"
 	strMap["intro"] = "This page is where we talk about ourselves"
 
-	userid := m.App.Session.GetString(request.Context(), "userid")
+	userid := m.App.Session.GetString(r.Context(), "userid")
 	strMap["userid"] = userid
 
-	render.RenderTemplate(w, "about.page.tmpl", &models.PageData{StrMap: strMap})
+	render.RenderTemplate(w, r, "about.page.tmpl", &models.PageData{StrMap: strMap})
 }
 
-func (m *Repository) LoginHandler(w http.ResponseWriter, request *http.Request) {
+func (m *Repository) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	strMap := make(map[string]string)
 
-	render.RenderTemplate(w, "login.page.tmpl", &models.PageData{StrMap: strMap})
+	render.RenderTemplate(w, r, "login.page.tmpl", &models.PageData{StrMap: strMap})
 }
 
-func (m *Repository) MakePostHandler(w http.ResponseWriter, request *http.Request) {
+func (m *Repository) MakePostHandler(w http.ResponseWriter, r *http.Request) {
 	strMap := make(map[string]string)
 
-	render.RenderTemplate(w, "make-post.page.tmpl", &models.PageData{StrMap: strMap})
+	render.RenderTemplate(w, r, "make-post.page.tmpl", &models.PageData{StrMap: strMap})
 }
 
-func (m *Repository) PageHandler(w http.ResponseWriter, request *http.Request) {
+func (m *Repository) PageHandler(w http.ResponseWriter, r *http.Request) {
 	strMap := make(map[string]string)
 
-	render.RenderTemplate(w, "page.page.tmpl", &models.PageData{StrMap: strMap})
+	render.RenderTemplate(w, r, "page.page.tmpl", &models.PageData{StrMap: strMap})
+}
+
+func (m *Repository) PostMakePostHandler(w http.ResponseWriter, r *http.Request) {
+
+	blog_title := r.Form.Get("blog_title")
+	blog_article := r.Form.Get("blog_article")
+	w.Write([]byte(blog_title))
+	w.Write([]byte(blog_article))
 }
