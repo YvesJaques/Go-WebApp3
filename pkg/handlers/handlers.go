@@ -96,6 +96,10 @@ func (m *Repository) ArticleReceived(w http.ResponseWriter, r *http.Request) {
 	article, ok := m.App.Session.Get(r.Context(), "article").(models.Article)
 	if !ok {
 		log.Println("Can't get data from session")
+
+		m.App.Session.Put(r.Context(), "error", "Can't get data from session")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+
 		return
 	}
 	data := make(map[string]interface{})
