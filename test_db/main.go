@@ -72,6 +72,14 @@ func updateUserEmail(conn *sql.DB, newEmail string, id int) {
 	}
 }
 
+func deleteUserById(conn *sql.DB, id int) {
+	query := fmt.Sprintf(`DELETE FROM users WHERE id = %d`, id)
+	_, err := conn.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func main() {
 	// Connect to postgres
 	conn, err := sql.Open("pgx", "host=localhost port=5432 dbname=blog_db user=postgres password=postgres")
@@ -98,4 +106,14 @@ func main() {
 	updateUserEmail(conn, "test@gmail.com", 1)
 	fmt.Println("--------------")
 	getUserData(conn, 1)
+
+	fmt.Println("--------------")
+	deleteUserById(conn, 2)
+	getUserData(conn, 1)
+
+	err = getAllRowData(conn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
