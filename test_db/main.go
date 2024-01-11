@@ -32,6 +32,38 @@ func getAllRowData(conn *sql.DB) error {
 	return nil
 }
 
+func insertNewUser(conn *sql.DB, name string, email string, pw string, uType int) error {
+	query := fmt.Sprintf(`INSERT INTO users (name, email, password, acct_created, last_login, user_type) VALUES
+	('%s', '%s', '%s', current_timestamp, current_timestamp, %d)`, name, email, pw, uType)
+
+	_, err := conn.Exec(query)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getUserData(conn *sql.DB, id int) error {
+	var name, email, pw, uType string
+
+	query := fmt.Sprintf(`SELECT id, name, email, password, user_type FROM users WHERE id = %d`, id)
+
+	row := conn.QueryRow(query)
+	err := row.Scan(&id, &name, &email, &pw, &uType)
+
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	fmt.Println("ID: %d", id)
+	fmt.Println("name: %s", name)
+	fmt.Println("email: %s", email)
+	fmt.Println("password: %s", pw)
+	fmt.Println("user type: %d", uType)
+
+	return nil
+}
+
 func main() {
 	// Connect to postgres
 	conn, err := sql.Open("pgx", "host=localhost port=5432 dbname=blog_db user=postgres password=postgres")
@@ -52,4 +84,6 @@ func main() {
 	}
 
 	fmt.Println("--------------")
+
+	getUserData(conn, 1)
 }
