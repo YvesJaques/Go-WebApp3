@@ -55,11 +55,11 @@ func getUserData(conn *sql.DB, id int) error {
 		log.Fatal(err)
 		return err
 	}
-	fmt.Println("ID: %d", id)
-	fmt.Println("name: %s", name)
-	fmt.Println("email: %s", email)
-	fmt.Println("password: %s", pw)
-	fmt.Println("user type: %d", uType)
+	fmt.Println("ID: ", id)
+	fmt.Println("name: ", name)
+	fmt.Println("email: ", email)
+	fmt.Println("password: ", pw)
+	fmt.Println("user type: ", uType)
 
 	return nil
 }
