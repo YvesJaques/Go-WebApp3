@@ -3,6 +3,8 @@ package dbdriver
 import (
 	"database/sql"
 	"time"
+
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 type DB struct {

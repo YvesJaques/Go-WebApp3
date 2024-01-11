@@ -5,19 +5,24 @@ import (
 	"net/http"
 	"web3/models"
 	"web3/pkg/config"
+	"web3/pkg/dbdriver"
 	"web3/pkg/forms"
 	"web3/pkg/render"
+	"web3/pkg/repository"
+	"web3/pkg/repository/dbrepo"
 )
 
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 var Repo *Repository
 
-func NewRepo(ac *config.AppConfig) *Repository {
+func NewRepo(ac *config.AppConfig, db *dbdriver.DB) *Repository {
 	return &Repository{
 		App: ac,
+		DB:  dbrepo.NewPostgresRepo(db.SQL, ac),
 	}
 }
 
