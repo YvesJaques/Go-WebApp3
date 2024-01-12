@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"web3/models"
@@ -158,4 +159,12 @@ func (m *Repository) PostLoginHandler(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "flash", "Successfully logged in!")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 
+	fmt.Println("Logged in")
+}
+
+func (m *Repository) LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	_ = m.App.Session.Destroy(r.Context())
+	_ = m.App.Session.RenewToken(r.Context())
+
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

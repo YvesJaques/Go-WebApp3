@@ -9,6 +9,7 @@ import (
 	"web3/pkg/config"
 	"web3/pkg/dbdriver"
 	handlers "web3/pkg/handlers"
+	"web3/pkg/render"
 
 	"github.com/alexedwards/scs/v2"
 )
@@ -57,6 +58,8 @@ func run() (*dbdriver.DB, error) {
 
 	repo := handlers.NewRepo(&app, db)
 	handlers.NewHandlers(repo)
+
+	render.NewAppConfig(&app)
 
 	return db, nil
 }
