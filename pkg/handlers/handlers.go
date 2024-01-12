@@ -128,3 +128,34 @@ func (m *Repository) PageHandler(w http.ResponseWriter, r *http.Request) {
 
 	render.RenderTemplate(w, r, "page.page.tmpl", &models.PageData{StrMap: strMap})
 }
+
+func (m *Repository) PostLoginHandler(w http.ResponseWriter, r *http.Request) {
+	_ = m.App.Session.RenewToken(r.Context())
+
+	err := r.ParseForm()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+
+	form := forms.New(r.PostForm)
+	form.HasRequired("email", "password")
+	form.IsEmail("email")
+
+	if !form.Valid() {
+		render.RenderTemplate(w, r, "login.page.tmpl", &models.PageData{Form: form})
+		return
+	}
+	id, _, err := m.DB.AuthenticateUser(email, password)
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "Invalid login credentials")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	m.App.Session.Put(r.Context(), "user_id", id)
+	m.App.Session.Put(r.Context(), "flash", "Successfully logged in!")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
+}
