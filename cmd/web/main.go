@@ -38,6 +38,10 @@ func main() {
 func run() (*dbdriver.DB, error) {
 	gob.Register(models.Article{})
 
+	// 26 Add table models in session
+	gob.Register(models.User{})
+	gob.Register(models.Post{})
+
 	sessionManager = scs.New()
 	sessionManager.Lifetime = 24 * time.Hour
 	sessionManager.Cookie.Persist = true

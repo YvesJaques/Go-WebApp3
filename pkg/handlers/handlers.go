@@ -71,9 +71,10 @@ func (m *Repository) PostMakePostHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	article := models.Article{
-		BlogTitle:   r.Form.Get("blog_title"),
-		BlogArticle: r.Form.Get("blog_article"),
+	article := models.Post{
+		Title:   r.Form.Get("blog_title"),
+		Content: r.Form.Get("blog_article"),
+		UserID:  1,
 	}
 
 	form := forms.New(r.PostForm)
@@ -93,6 +94,13 @@ func (m *Repository) PostMakePostHandler(w http.ResponseWriter, r *http.Request)
 		})
 		return
 	}
+
+	//Write to DB
+	err = m.DB.InsertPost(article)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	m.App.Session.Put(r.Context(), "article", article)
 	http.Redirect(w, r, "/article-received", http.StatusSeeOther)
 }
