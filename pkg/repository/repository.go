@@ -10,4 +10,8 @@ type DatabaseRepo interface {
 	UpdateUser(user models.User) error
 
 	AuthenticateUser(email, testPassword string) (int, string, error)
+
+	GetAnArticle() (int, int, string, string, error)
+
+	GetArticles(optional_amount ...int) (models.ArticleList, error)
 }

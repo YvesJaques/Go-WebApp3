@@ -82,3 +82,57 @@ func (m *postgresDBRepo) AuthenticateUser(email, testPassword string) (int, stri
 	}
 	return id, hashedPassword, nil
 }
+
+func (m *postgresDBRepo) GetAnArticle() (int, int, string, string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	query := `select id, user_id, title, content from posts LIMIT 1`
+
+	row := m.DB.QueryRowContext(ctx, query)
+
+	var id int
+	var userID int
+	var title string
+	var content string
+
+	err := row.Scan(&id, &userID, &title, &content)
+	if err != nil {
+		return id, userID, "", "", err
+	}
+	return id, userID, title, content, nil
+}
+
+func (m *postgresDBRepo) GetArticles(optional_amount ...int) (models.ArticleList, error) {
+	amount := 3
+	if len(optional_amount) > 0 {
+		amount = optional_amount[0]
+	}
+
+	query := `select id, user_id, title, content from posts ORDER BY id DESC LIMIT $1`
+
+	var artList models.ArticleList
+	rows, err := m.DB.Query(query, amount)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id, uID int
+		var title, content string
+		err := rows.Scan(&id, &uID, &title, &content)
+		if err != nil {
+			panic(err)
+		}
+		artList.ID = append(artList.ID, id)
+		artList.UserID = append(artList.UserID, uID)
+		artList.Title = append(artList.Title, title)
+		artList.Content = append(artList.Content, content)
+	}
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+	return artList, nil
+}

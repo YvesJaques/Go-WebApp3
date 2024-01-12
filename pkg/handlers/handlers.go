@@ -32,9 +32,26 @@ func NewHandlers(r *Repository) {
 }
 
 func (m *Repository) HomeHandler(w http.ResponseWriter, r *http.Request) {
+
+	var artList models.ArticleList
+	artList, err := m.DB.GetArticles()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	for i := range artList.Content {
+		fmt.Println(artList.Content[i])
+	}
+
 	m.App.Session.Put(r.Context(), "userid", "12345")
 
-	render.RenderTemplate(w, r, "home.page.tmpl", &models.PageData{})
+	data := make(map[string]interface{})
+	data["articleList"] = artList
+
+	render.RenderTemplate(w, r, "home.page.tmpl", &models.PageData{
+		Data: data,
+	})
 }
 
 func (m *Repository) AboutHandler(w http.ResponseWriter, r *http.Request) {
@@ -79,10 +96,12 @@ func (m *Repository) PostMakePostHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	uID := (m.App.Session.Get(r.Context(), "user_id")).(int)
+
 	article := models.Post{
 		Title:   r.Form.Get("blog_title"),
 		Content: r.Form.Get("blog_article"),
-		UserID:  1,
+		UserID:  int(uID),
 	}
 
 	form := forms.New(r.PostForm)
