@@ -55,6 +55,13 @@ func (m *Repository) LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) MakePostHandler(w http.ResponseWriter, r *http.Request) {
+
+	if !m.App.Session.Exists(r.Context(), "user_id") {
+		m.App.Session.Put(r.Context(), "error", "Log in first")
+		http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+		return
+	}
+
 	var emptyArticle models.Article
 	data := make(map[string]interface{})
 	data["article"] = emptyArticle
